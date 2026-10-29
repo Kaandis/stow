@@ -1,0 +1,57 @@
+name: Stow
+options:
+  bundleIdPrefix: app.stow
+  deploymentTarget:
+    macOS: "15.0"
+  createIntermediateGroups: true
+  developmentLanguage: en
+
+packages:
+  HarborKit:
+    url: https://github.com/Kaandis/harbor-kit
+    from: 0.2.0
+
+settings:
+  base:
+    SWIFT_VERSION: "5.0"
+    MARKETING_VERSION: "1.0"
+    CURRENT_PROJECT_VERSION: "1"
+    DEVELOPMENT_TEAM: ""
+    CODE_SIGN_STYLE: Automatic
+    CODE_SIGN_IDENTITY: "-"
+    ENABLE_HARDENED_RUNTIME: NO
+    LOCALIZATION_PREFERS_STRING_CATALOGS: YES
+    SWIFT_EMIT_LOC_STRINGS: YES
+
+targets:
+  Stow:
+    type: application
+    platform: macOS
+    sources:
+      - path: Stow
+    dependencies:
+      - package: HarborKit
+    info:
+      path: Stow/Resources/Info.plist
+      properties:
+        CFBundleDisplayName: Stow
+        CFBundleDevelopmentRegion: en
+        CFBundleAllowMixedLocalizations: true
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        LSUIElement: true
+        LSMinimumSystemVersion: "15.0"
+        LSApplicationCategoryType: public.app-category.utilities
+        NSHumanReadableCopyright: MIT License
+    entitlements:
+      path: Stow/Resources/Stow.entitlements
+      properties: {}
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: app.stow.Stow
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        GENERATE_INFOPLIST_FILE: NO
+      configs:
+        # Xcode otherwise adds get-task-allow even to Release builds.
+        Release:
+          CODE_SIGN_INJECT_BASE_ENTITLEMENTS: NO

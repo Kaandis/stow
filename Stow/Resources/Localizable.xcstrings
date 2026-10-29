@@ -1,0 +1,496 @@
+{
+  "sourceLanguage": "en",
+  "strings": {
+    "%lld": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld"
+          }
+        }
+      }
+    },
+    "1 minute": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1 dakika"
+          }
+        }
+      }
+    },
+    "15 seconds": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "15 saniye"
+          }
+        }
+      }
+    },
+    "30 seconds": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "30 saniye"
+          }
+        }
+      }
+    },
+    "5 seconds": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "5 saniye"
+          }
+        }
+      }
+    },
+    "9:41": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "9:41"
+          }
+        }
+      }
+    },
+    "A second divider for icons that stay hidden until you ⌥-click Stow’s arrow.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stow’un okuna ⌥ ile tıklayana kadar gizli kalan simgeler için ikinci bir ayraç."
+          }
+        }
+      }
+    },
+    "About": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hakkında"
+          }
+        }
+      }
+    },
+    "Always Hidden section": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hep Gizli bölümü"
+          }
+        }
+      }
+    },
+    "An icon dragged left of the divider, then tucked away by Stow’s arrow.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ayracın soluna sürüklenen bir simge, ardından Stow’un okuyla kaldırılıyor."
+          }
+        }
+      }
+    },
+    "Click Stow’s arrow to tuck everything left of the divider away. Click again to bring it back.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ayracın solundaki her şeyi kaldırmak için Stow’un okuna tıkla. Geri getirmek için yeniden tıkla."
+          }
+        }
+      }
+    },
+    "Free and open source. Part of the Harbor apps.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ücretsiz ve açık kaynak. Harbor uygulamalarından biri."
+          }
+        }
+      }
+    },
+    "General": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Genel"
+          }
+        }
+      }
+    },
+    "Got It": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Anladım"
+          }
+        }
+      }
+    },
+    "Hide Always Hidden Icons": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hep Gizli Simgeleri Gizle"
+          }
+        }
+      }
+    },
+    "Hide again after": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Yeniden gizleme süresi"
+          }
+        }
+      }
+    },
+    "Hide icons": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Simgeleri gizle"
+          }
+        }
+      }
+    },
+    "Hold ⌘ and drag Stow’s arrow to the right of the thin divider, so it stays in the menu bar when the icons tuck away.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "⌘’ye basılı tutup Stow’un okunu ince ayracın sağına sürükle; böylece simgeler kaldırılınca ok menü çubuğunda kalır."
+          }
+        }
+      }
+    },
+    "Hold ⌘ and drag icons across the thin divider: left of it tucks away, right of Stow’s arrow stays in view.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "⌘’ye basılı tutup simgeleri ince ayracın öbür yanına sürükle: solundakiler kaldırılır, Stow’un okunun sağındakiler görünür kalır."
+          }
+        }
+      }
+    },
+    "How to Use Stow…": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stow Nasıl Kullanılır…"
+          }
+        }
+      }
+    },
+    "Language": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dil"
+          }
+        }
+      }
+    },
+    "Launch at login": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Girişte başlat"
+          }
+        }
+      }
+    },
+    "Never": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hiçbir zaman"
+          }
+        }
+      }
+    },
+    "None": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Yok"
+          }
+        }
+      }
+    },
+    "OK": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tamam"
+          }
+        }
+      }
+    },
+    "On macOS 27, tucked-away icons also wait in the system’s overflow menu at the edge of the icons.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "macOS 27’de kaldırılan simgeler, simgelerin kenarındaki sistem taşma menüsünde de bekler."
+          }
+        }
+      }
+    },
+    "Quit Stow": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stow’dan Çık"
+          }
+        }
+      }
+    },
+    "Restart Now": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Şimdi Yeniden Başlat"
+          }
+        }
+      }
+    },
+    "Restart Stow to switch languages.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dili değiştirmek için Stow’u yeniden başlat."
+          }
+        }
+      }
+    },
+    "Sections": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bölümler"
+          }
+        }
+      }
+    },
+    "Settings…": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ayarlar…"
+          }
+        }
+      }
+    },
+    "Shortcut": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kısayol"
+          }
+        }
+      }
+    },
+    "Show Always Hidden Icons": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hep Gizli Simgeleri Göster"
+          }
+        }
+      }
+    },
+    "Show dividers while icons are showing": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Simgeler görünürken ayraçları göster"
+          }
+        }
+      }
+    },
+    "Show hidden icons": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gizli simgeleri göster"
+          }
+        }
+      }
+    },
+    "Show when the pointer rests on the menu bar": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "İşaretçi menü çubuğunda durunca göster"
+          }
+        }
+      }
+    },
+    "Showing hidden icons": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gizli simgeleri gösterme"
+          }
+        }
+      }
+    },
+    "Stow": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stow"
+          }
+        }
+      }
+    },
+    "Stow Always Hidden divider": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stow Hep Gizli ayracı"
+          }
+        }
+      }
+    },
+    "Stow divider": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stow ayracı"
+          }
+        }
+      }
+    },
+    "Stow keeps the icons you rarely need out of the way, and brings them back with a click.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stow, nadiren kullandığın simgeleri gözden uzak tutar ve tek tıkla geri getirir."
+          }
+        }
+      }
+    },
+    "Stow’s arrow is left of its divider": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stow’un oku ayracın solunda"
+          }
+        }
+      }
+    },
+    "Tuck menu bar icons away": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Menü çubuğu simgelerini kaldır"
+          }
+        }
+      }
+    },
+    "Version %@": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sürüm %@"
+          }
+        }
+      }
+    },
+    "Website": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Web Sitesi"
+          }
+        }
+      }
+    },
+    "Welcome to Stow": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stow’a Hoş Geldin"
+          }
+        }
+      }
+    },
+    "⌃⌥S": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "⌃⌥S"
+          }
+        }
+      }
+    },
+    "⌥-click the arrow for the Always Hidden icons, if you turned them on. Right-click it for settings.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hep Gizli simgeler için (açtıysan) oka ⌥ ile tıkla. Ayarlar için sağ tıkla."
+          }
+        }
+      }
+    },
+    "⌥⌘B": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "⌥⌘B"
+          }
+        }
+      }
+    }
+  },
+  "version": "1.0"
+}

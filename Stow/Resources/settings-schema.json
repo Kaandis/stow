@@ -1,0 +1,181 @@
+{
+  "schemaVersion": 1,
+  "app": {
+    "id": "app.stow.Stow",
+    "name": "Stow",
+    "site": "https://kaandis.github.io/stow/",
+    "repository": "https://github.com/Kaandis/stow"
+  },
+  "defaultsDomain": "app.stow.Stow",
+  "notes": "Every setting is a plain UserDefaults key in defaultsDomain. Stow watches UserDefaults and applies changes live. Launch at login is not listed: it is an SMAppService login item that only Stow itself can register.",
+  "groups": [
+    {
+      "id": "showing",
+      "title": {
+        "en": "Showing Hidden Icons",
+        "tr": "Gizli Simgeleri Gösterme"
+      },
+      "settings": [
+        {
+          "key": "hideDelay",
+          "type": "enum",
+          "default": 15,
+          "options": [
+            {
+              "value": 5,
+              "title": {
+                "en": "5 seconds",
+                "tr": "5 saniye"
+              }
+            },
+            {
+              "value": 15,
+              "title": {
+                "en": "15 seconds",
+                "tr": "15 saniye"
+              }
+            },
+            {
+              "value": 30,
+              "title": {
+                "en": "30 seconds",
+                "tr": "30 saniye"
+              }
+            },
+            {
+              "value": 60,
+              "title": {
+                "en": "1 minute",
+                "tr": "1 dakika"
+              }
+            },
+            {
+              "value": 0,
+              "title": {
+                "en": "Never",
+                "tr": "Hiçbir zaman"
+              }
+            }
+          ],
+          "title": {
+            "en": "Hide again after",
+            "tr": "Yeniden gizleme süresi"
+          }
+        },
+        {
+          "key": "revealOnHover",
+          "type": "bool",
+          "default": false,
+          "title": {
+            "en": "Show when the pointer rests on the menu bar",
+            "tr": "İşaretçi menü çubuğunda durunca göster"
+          }
+        },
+        {
+          "key": "toggleShortcut",
+          "type": "enum",
+          "default": "off",
+          "options": [
+            {
+              "value": "off",
+              "title": {
+                "en": "None",
+                "tr": "Yok"
+              }
+            },
+            {
+              "value": "controlOptionS",
+              "title": {
+                "en": "⌃⌥S",
+                "tr": "⌃⌥S"
+              }
+            },
+            {
+              "value": "optionCommandB",
+              "title": {
+                "en": "⌥⌘B",
+                "tr": "⌥⌘B"
+              }
+            }
+          ],
+          "title": {
+            "en": "Shortcut",
+            "tr": "Kısayol"
+          }
+        }
+      ]
+    },
+    {
+      "id": "sections",
+      "title": {
+        "en": "Sections",
+        "tr": "Bölümler"
+      },
+      "settings": [
+        {
+          "key": "showDividers",
+          "type": "bool",
+          "default": true,
+          "title": {
+            "en": "Show dividers while icons are showing",
+            "tr": "Simgeler görünürken ayraçları göster"
+          }
+        },
+        {
+          "key": "alwaysHiddenEnabled",
+          "type": "bool",
+          "default": false,
+          "title": {
+            "en": "Always Hidden section",
+            "tr": "Hep Gizli bölümü"
+          },
+          "description": {
+            "en": "A second divider for icons that stay hidden until you ⌥-click Stow’s arrow.",
+            "tr": "Stow’un okuna ⌥ ile tıklayana kadar gizli kalan simgeler için ikinci bir ayraç."
+          }
+        },
+        {
+          "key": "AppleLanguages",
+          "type": "language",
+          "default": null,
+          "options": [
+            {
+              "value": null,
+              "title": {
+                "en": "System",
+                "tr": "Sistem"
+              }
+            },
+            {
+              "value": [
+                "en"
+              ],
+              "title": {
+                "en": "English",
+                "tr": "English"
+              }
+            },
+            {
+              "value": [
+                "tr"
+              ],
+              "title": {
+                "en": "Türkçe",
+                "tr": "Türkçe"
+              }
+            }
+          ],
+          "restartRequired": true,
+          "title": {
+            "en": "Language",
+            "tr": "Dil"
+          },
+          "description": {
+            "en": "Remove the key to follow the system language.",
+            "tr": "Sistem dilini izlemek için anahtarı kaldır."
+          }
+        }
+      ]
+    }
+  ]
+}
