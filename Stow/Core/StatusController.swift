@@ -29,8 +29,15 @@ final class StatusController {
     /// Bumped on every change, so a delayed grow never lands after the
     /// icons were asked to show again.
     private var fillGeneration = 0
+    private var pendingLayout: DispatchWorkItem?
+    private var lastLayout = Date.distantPast
+    /// How long macOS takes to fade icons in or out of the bar.
+    private static let settleTime: TimeInterval = 0.45
     /// The divider position each set of spacers was seated beside.
     private var spacerBases: [String: Double] = [:]
+    /// Where each divider's group started the last time it was open.
+    private var openLeftEdges: [String: CGFloat] = [:]
+    private var activationToken: NSObjectProtocol?
 
     /// Before macOS 27: wider than any display, so everything to the left
     /// is pushed off.
@@ -67,6 +74,11 @@ final class StatusController {
             button.setAccessibilityLabel(String(localized: "Stow"))
         }
         divider.button?.setAccessibilityLabel(String(localized: "Stow divider"))
+        activationToken = NSWorkspace.shared.notificationCenter.addObserver(
+            forName: NSWorkspace.didActivateApplicationNotification, object: nil, queue: .main
+        ) { [weak self] _ in
+            MainActor.assumeIsolated { self?.refit() }
+        }
         applySettings()
         // Open first; hide once the items are laid out and their order can be
         // checked. On first launch they stay open for the guide.
@@ -78,14 +90,23 @@ final class StatusController {
 
     /// Re-reads the settings that shape the bar: the Always Hidden divider
     /// and whether dividers show.
+    /// On macOS 27 the Always Hidden section can only be sized right with
+    /// the app menus measured; filled blind it overflows itself and leaves
+    /// the system's overflow arrow showing for nothing.
+    static var canUseAlwaysHidden: Bool { !isHosted || AppMenuMeasure.isAllowed }
+
     func applySettings() {
-        if Prefs.bool(Prefs.alwaysHiddenEnabled), alwaysDivider == nil {
-            Self.seedPosition("Stow.AlwaysDivider", Self.systemItemsEdge + 3)
+        let wantsAlwaysHidden = Prefs.bool(Prefs.alwaysHiddenEnabled) && Self.canUseAlwaysHidden
+        if wantsAlwaysHidden, alwaysDivider == nil {
+            // It starts at the far left, so nothing is always hidden until you
+            // ⌘-drag icons past it. Everything shows so you can see it at once.
+            Self.seedPosition("Stow.AlwaysDivider", 100_000)
             let item = NSStatusBar.system.statusItem(withLength: Self.dividerLength)
             item.autosaveName = "Stow.AlwaysDivider"
             item.button?.setAccessibilityLabel(String(localized: "Stow Always Hidden divider"))
             alwaysDivider = item
-        } else if !Prefs.bool(Prefs.alwaysHiddenEnabled), let item = alwaysDivider {
+            state = .all
+        } else if !wantsAlwaysHidden, let item = alwaysDivider {
             removeSpacers(beside: item)
             NSStatusBar.system.removeStatusItem(item)
             alwaysDivider = nil
@@ -117,19 +138,38 @@ final class StatusController {
         apply(new, animated: true)
     }
 
+    /// The arrow answers at once; the bar follows. While macOS is still
+    /// animating the last change, a new one waits for it to finish and only
+    /// the latest state is applied. Changed mid-animation, the bar throws the
+    /// icons to the far left and slides them back.
     private func apply(_ new: State, animated: Bool) {
         state = new
-        fillGeneration += 1
-        let dividers = Prefs.bool(Prefs.showDividers)
-        configure(divider, closed: new == .hidden, visible: dividers, glyph: "|")
-        if let alwaysDivider {
-            configure(alwaysDivider, closed: new != .all, visible: dividers, glyph: "‖")
-        }
         toggle.button?.image = NSImage(systemSymbolName: new == .hidden ? "chevron.compact.left" : "chevron.compact.right",
                                        accessibilityDescription: nil)
         toggle.button?.image?.isTemplate = true
         toggle.button?.toolTip = new == .hidden ? String(localized: "Show hidden icons") : String(localized: "Hide icons")
         scheduleRehide()
+
+        pendingLayout?.cancel()
+        let wait = animated ? Self.settleTime - Date().timeIntervalSince(lastLayout) : 0
+        guard wait > 0 else { layOut(); return }
+        let work = DispatchWorkItem { [weak self] in self?.layOut() }
+        pendingLayout = work
+        DispatchQueue.main.asyncAfter(deadline: .now() + wait, execute: work)
+    }
+
+    /// Sets the dividers for the current state.
+    private func layOut() {
+        pendingLayout = nil
+        lastLayout = Date()
+        fillGeneration += 1
+        // Showing everything is when you arrange, so dividers show then even
+        // if you hid them.
+        let dividers = Prefs.bool(Prefs.showDividers) || state == .all
+        configure(divider, closed: state == .hidden, visible: dividers, glyph: "|")
+        if let alwaysDivider {
+            configure(alwaysDivider, closed: state != .all, visible: dividers, glyph: "‖")
+        }
     }
 
     private func configure(_ item: NSStatusItem, closed: Bool, visible: Bool, glyph: String) {
@@ -157,20 +197,80 @@ final class StatusController {
     /// at hide time, each new one would nudge the icons left before they
     /// fade; kept, hiding is only growing, and the icons simply fade.
     private func fill(beside divider: NSStatusItem) {
-        let (cap, count) = Self.fillMetrics
-        let created = seatSpacers(beside: divider, count: count - 1)
-        guard let name = divider.autosaveName else { divider.length = cap; return }
+        // The room is measured from where the divider's group starts while
+        // it's open; once closed, the last open measure stands in.
+        guard let name = divider.autosaveName else { return }
+        let isOpen = divider.length <= Self.dividerLength + 1
+        if isOpen, let edge = clusterLeftEdge(of: divider) { openLeftEdges[name] = edge }
+        let lengths = Self.fillLengths(leftEdge: openLeftEdges[name])
+        let created = seatSpacers(beside: divider, count: lengths.count - 1)
         let generation = fillGeneration
         let grow = { [weak self] in
             guard let self, generation == self.fillGeneration else { return }
-            self.spacers[name]?.forEach { $0.length = cap }
-            divider.length = cap
+            for (item, length) in zip(self.spacers[name] ?? [], lengths.dropFirst()) { item.length = length }
+            divider.length = lengths[0]
         }
         if created {
             whenSeated(spacers[name] ?? [], beside: divider, generation: generation, then: grow)
         } else {
             grow()
         }
+    }
+
+    /// Where the divider's group starts, while it's open: the left edge of
+    /// its leftmost spacer, or of the divider itself. Nil if the bar hasn't
+    /// laid them out (on another Space, say).
+    private func clusterLeftEdge(of divider: NSStatusItem) -> CGFloat? {
+        let items = [divider] + (divider.autosaveName.flatMap { spacers[$0] } ?? [])
+        let edges = items.compactMap { item -> CGFloat? in
+            guard let window = item.button?.window, window.isOnActiveSpace, window.frame.minX > 0 else { return nil }
+            return window.frame.minX
+        }
+        return edges.min()
+    }
+
+    /// How long the divider and each spacer get when closing.
+    ///
+    /// The fill should cover just the room between the frontmost app's menus
+    /// and the divider: then macOS files the icons into its overflow and they
+    /// fade out, and back in when shown. Much more than that shoves them off
+    /// the left of the screen and they slide back in instead. With
+    /// Accessibility allowed, the menus are measured and the fill is that
+    /// room plus a little; without it, the fill spans the whole display,
+    /// which always hides but may slide. Each item stays under half the
+    /// narrowest display, which macOS 27 requires.
+    private static func fillLengths(leftEdge: CGFloat?) -> [CGFloat] {
+        let (cap, count) = fillMetrics
+        #if DEBUG
+        // `-debugFill <points>` fills exactly that much instead, for testing.
+        let forced = UserDefaults.standard.double(forKey: "debugFill")
+        if forced > 0 { return split(forced, cap: cap) }
+        #endif
+        guard let leftEdge, let menusEnd = AppMenuMeasure.menusEnd(), leftEdge > menusEnd else {
+            return Array(repeating: cap, count: count)
+        }
+        return split(leftEdge - menusEnd + fitMargin, cap: cap)
+    }
+
+    /// A little more than the measured room, so the last icon never squeezes in.
+    private static let fitMargin: CGFloat = 40
+
+    /// Fits the fill again when another app comes forward: its menus end
+    /// somewhere else, so the room changed.
+    func refit() {
+        guard Self.isHosted, AppMenuMeasure.isAllowed, pendingLayout == nil else { return }
+        fillGeneration += 1
+        if state == .hidden { fill(beside: divider) }
+        if state != .all, let alwaysDivider { fill(beside: alwaysDivider) }
+    }
+
+    /// Splits `total` points of filling into items no wider than `cap`, the
+    /// divider first, allowing for the padding macOS adds around each.
+    private static func split(_ total: CGFloat, cap: CGFloat) -> [CGFloat] {
+        let slot = cap + hostedPadding
+        let count = min(max(Int((total / slot).rounded(.up)), 1), 8)
+        let each = min(max(total / CGFloat(count) - hostedPadding, 0), cap)
+        return Array(repeating: each, count: count)
     }
 
     /// The largest length every display accepts, and how many items it
@@ -370,6 +470,7 @@ final class StatusController {
 
     /// Puts every icon back before Stow quits, so nothing is left pushed away.
     func restoreForQuit() {
+        pendingLayout?.cancel()
         removeSpacers(beside: divider)
         if let alwaysDivider { removeSpacers(beside: alwaysDivider) }
         divider.length = Self.dividerLength

@@ -59,11 +59,21 @@ struct GuideView: View {
             .padding(.top, 24)
 
             if ProcessInfo.processInfo.operatingSystemVersion.majorVersion >= 27 {
-                Text("On macOS 27, tucked-away icons also wait in the system’s overflow menu at the edge of the icons.")
-                    .font(.system(size: 12))
-                    .foregroundStyle(Theme.ink3)
-                    .fixedSize(horizontal: false, vertical: true)
-                    .padding(.top, 14)
+                HStack(alignment: .center, spacing: 12) {
+                    Text("Optional: allow Accessibility so Stow can see where app menus end. Hidden icons then fade out and back in instead of sliding. Stow reads nothing else.")
+                        .font(.system(size: 12))
+                        .foregroundStyle(Theme.ink2)
+                        .fixedSize(horizontal: false, vertical: true)
+                    Spacer(minLength: 8)
+                    if !AppMenuMeasure.isAllowed {
+                        Button("Allow…") {
+                            AppMenuMeasure.requestPermission()
+                            AppMenuMeasure.openSettings()
+                        }
+                        .buttonStyle(HarborButtonStyle(prominent: false))
+                    }
+                }
+                .padding(.top, 18)
             }
 
             Spacer(minLength: 20)

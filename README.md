@@ -34,7 +34,8 @@
 
 ## Why it works this way
 
-- **Only public API.** Hiding is widening Stow’s own divider until nothing to its left fits. macOS then leaves those icons out of the bar. No Accessibility, no Screen Recording, no private frameworks: there is nothing to grant.
+- **Only public API.** Hiding is widening Stow’s own divider until nothing to its left fits. macOS then leaves those icons out of the bar. No Screen Recording and no private frameworks, and nothing you must grant.
+- **One optional permission on macOS 27.** With Accessibility allowed, Stow reads where the app menus end and fills exactly that room, so hidden icons fade out and back in instead of sliding; Always Hidden needs it there to size itself. Stow reads nothing else.
 - **Ready for macOS 27.** macOS 27 draws the menu bar as one piece, which broke managers that moved each icon’s window, and adds its own overflow arrow at the edge of the icons. Stow never touched those windows; its tucked icons simply wait in that overflow too.
 - **No separate bar.** A second bar of hidden icons (like Ice’s) would need each icon on its own, which macOS 27 no longer offers. Stow sticks to what the system supports, so updates don’t break it.
 - **Quiet.** Nothing runs while the bar sits still. Hover reveal is off by default because it’s the one feature that has to follow the pointer.

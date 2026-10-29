@@ -56,12 +56,19 @@ private struct GeneralSettings: View {
             Section {
                 Toggle("Show dividers while icons are showing", isOn: $showDividers)
                 Toggle("Always Hidden section", isOn: $alwaysHidden)
-                Text("A second divider for icons that stay hidden until you ⌥-click Stow’s arrow.")
+                    .disabled(!StatusController.canUseAlwaysHidden)
+                Text(StatusController.canUseAlwaysHidden
+                     ? LocalizedStringKey("A second divider for icons that stay hidden until you ⌥-click Stow’s arrow.")
+                     : LocalizedStringKey("On macOS 27, Always Hidden needs Accessibility, below, to size itself to the app menus."))
                     .font(.caption)
                     .foregroundStyle(.secondary)
                 Button("How to Use Stow…") { Guide.show() }
             } header: {
                 Text("Sections")
+            }
+
+            if ProcessInfo.processInfo.operatingSystemVersion.majorVersion >= 27 {
+                SmoothHidingSection()
             }
 
             Section {
@@ -80,6 +87,36 @@ private struct GeneralSettings: View {
             }
         }
         .formStyle(.grouped)
+    }
+}
+
+/// The one optional permission: Accessibility, to measure where app menus
+/// end so hidden icons fade instead of sliding on macOS 27.
+struct SmoothHidingSection: View {
+    @State private var allowed = AppMenuMeasure.isAllowed
+
+    var body: some View {
+        Section {
+            LabeledContent("Accessibility") {
+                Label(allowed ? "Allowed" : "Not allowed",
+                      systemImage: allowed ? "checkmark.circle.fill" : "circle.dashed")
+                    .foregroundStyle(allowed ? Color.primary : .secondary)
+            }
+            if !allowed {
+                Button("Allow Accessibility…") {
+                    AppMenuMeasure.requestPermission()
+                    AppMenuMeasure.openSettings()
+                }
+            }
+            Text("Stow reads only where the app menus end, so hidden icons fade out and back in instead of sliding. Everything else works without it.")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+        } header: {
+            Text("Smoother hiding")
+        }
+        .onReceive(NotificationCenter.default.publisher(for: NSApplication.didBecomeActiveNotification)) { _ in
+            allowed = AppMenuMeasure.isAllowed
+        }
     }
 }
 

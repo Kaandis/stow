@@ -21,6 +21,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private let shortcut = ToggleShortcut()
     private let hover = HoverReveal()
     private var defaultsToken: NSObjectProtocol?
+    private var activeToken: NSObjectProtocol?
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         Prefs.registerDefaults()
@@ -43,6 +44,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             MainActor.assumeIsolated { self?.applyPrefs() }
         }
 
+        activeToken = NotificationCenter.default.addObserver(
+            forName: NSApplication.didBecomeActiveNotification, object: nil, queue: .main
+        ) { [weak self] _ in
+            MainActor.assumeIsolated { self?.applyPrefs() }
+        }
+
         if !Prefs.bool(Prefs.hasCompletedOnboarding) { Guide.show() }
         #if DEBUG
         // `Stow --cycle` steps through hidden, shown and all every few seconds,
@@ -57,6 +64,25 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                     try? await Task.sleep(for: .seconds(4))
                     controller.set(state)
                     log.notice("cycle: \(String(describing: state))")
+                }
+            }
+        }
+        // `Stow --remote` takes "toggle", "hidden", "shown" or "all" through
+        // the distributed notification app.stow.debug, so states can be
+        // driven from a script while the bar is recorded.
+        if CommandLine.arguments.contains("--remote") {
+            DistributedNotificationCenter.default().addObserver(
+                forName: Notification.Name("app.stow.debug"), object: nil, queue: .main
+            ) { note in
+                let command = note.object as? String
+                MainActor.assumeIsolated {
+                    switch command {
+                    case "toggle": controller.toggleHidden()
+                    case "hidden": controller.set(.hidden)
+                    case "shown": controller.set(.shown)
+                    case "all": controller.set(.all)
+                    default: break
+                    }
                 }
             }
         }
@@ -86,7 +112,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         defer { isApplying = false }
         controller?.followDraggedDividers()
         let now = (Prefs.string(Prefs.toggleShortcut), Prefs.bool(Prefs.revealOnHover),
-                   Prefs.bool(Prefs.alwaysHiddenEnabled), Prefs.bool(Prefs.showDividers))
+                   Prefs.bool(Prefs.alwaysHiddenEnabled) && StatusController.canUseAlwaysHidden,
+                   Prefs.bool(Prefs.showDividers))
         let previous = applied
         applied = now
         if previous?.shortcut != now.0 { shortcut.apply(now.0) }

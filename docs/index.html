@@ -91,7 +91,7 @@
         <div class="feature"><span class="tile"><svg><use href="#t-tuck"/></svg></span><h3 data-i18n="f1.t">Choose with ⌘-drag</h3><p data-i18n="f1.d">Hold ⌘ and drag icons left of Stow’s thin divider, the way macOS already moves them. macOS keeps the order, so there’s nothing to set up twice.</p></div>
         <div class="feature"><span class="tile"><svg><use href="#t-layers"/></svg></span><h3 data-i18n="f2.t">Hidden and Always Hidden</h3><p data-i18n="f2.d">Click the arrow for the hidden icons; ⌥-click it for the ones you keep further away. They tuck back on their own after a while.</p></div>
         <div class="feature"><span class="tile"><svg><use href="#t-key"/></svg></span><h3 data-i18n="f3.t">A shortcut, or just hover</h3><p data-i18n="f3.d">Toggle with ⌃⌥S or ⌥⌘B, or let them show when the pointer rests on the menu bar.</p></div>
-        <div class="feature"><span class="tile"><svg><use href="#t-leaf"/></svg></span><h3 data-i18n="f4.t">No permissions, no load</h3><p data-i18n="f4.d">Stow uses only the menu bar’s public interface. It asks for nothing and sits idle until you click.</p></div>
+        <div class="feature"><span class="tile"><svg><use href="#t-leaf"/></svg></span><h3 data-i18n="f4.t">Light, and asks for little</h3><p data-i18n="f4.d">Stow uses only the menu bar’s public interface and sits idle until you click. One optional permission makes hiding smoother on macOS 27.</p></div>
       </div>
     </section>
 
@@ -111,7 +111,7 @@
         <details><summary data-i18n="q1.q">How do I choose which icons hide?</summary><p data-i18n="q1.a">Hold ⌘ and drag an icon in the menu bar. Everything left of Stow’s thin divider tucks away; everything right of its arrow stays. macOS remembers the order.</p></details>
         <details><summary data-i18n="q2.q">Does it work on macOS 27?</summary><p data-i18n="q2.a">Yes. macOS 27 draws the menu bar as one piece and adds its own overflow arrow at the edge of the icons. Stow’s tucked-away icons go there, so they’re still a click away from the system’s arrow too.</p></details>
         <details><summary data-i18n="q3.q">Why doesn’t it have a separate bar for hidden icons, like Ice?</summary><p data-i18n="q3.a">On macOS 27 the menu bar no longer exposes each icon on its own, so a second bar would rely on fragile tricks that break with updates. Stow sticks to what macOS supports.</p></details>
-        <details><summary data-i18n="q4.q">What permissions does Stow need?</summary><p data-i18n="q4.a">None. It only adds its own small items to the menu bar: an arrow and a divider (two if you use Always Hidden).</p></details>
+        <details><summary data-i18n="q4.q">What permissions does Stow need?</summary><p data-i18n="q4.a">None to work. On macOS 27 you can allow Accessibility so Stow sees where the app menus end: hidden icons then fade out and back in instead of sliding, and Always Hidden can size itself. It reads nothing else.</p></details>
         <details><summary data-i18n="q5.q">macOS says it can’t be opened.</summary><p data-i18n="q5.a">Builds aren’t notarized yet. Right-click Stow and choose Open, or run <code>xattr -dr com.apple.quarantine /Applications/Stow.app</code>.</p></details>
       </div>
     </section>
@@ -129,6 +129,6 @@
     <p class="disclaimer" data-i18n="footer.disclaimer">Stow is an independent project and is not affiliated with, endorsed by or sponsored by Apple Inc. Mac and macOS are trademarks of Apple Inc., registered in the U.S. and other countries.</p>
   </footer>
 
-  <script src="app.js?v=1"></script>
+  <script src="app.js?v=2"></script>
 </body>
 </html>
