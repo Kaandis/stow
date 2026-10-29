@@ -28,7 +28,8 @@
 ## Neden böyle çalışıyor
 
 - **Yalnızca herkese açık API.** Gizlemek, Stow’un kendi ayracını solundaki hiçbir şey sığmayana kadar genişletmektir. macOS o simgeleri çubuğun dışında bırakır. Ekran Kaydı yok, özel çerçeve yok; vermen gereken bir izin yok.
-- **macOS 27’de isteğe bağlı tek izin.** Erişilebilirliğe izin verirsen Stow uygulama menülerinin nerede bittiğini okur ve tam o boşluğu doldurur; gizli simgeler kaymak yerine soluklaşarak kaybolur ve geri gelir. Hep Gizli orada kendini boyutlandırmak için bu izne ihtiyaç duyar. Stow başka hiçbir şey okumaz.
+- **macOS 27’de isteğe bağlı tek izin.** Hep Gizli orada, uygulama menülerinin nerede bittiğini okuyup kendini o boşluğa göre boyutlandırmak için Erişilebilirliğe ihtiyaç duyar. Stow başka hiçbir şey okumaz.
+- **macOS 27’de nasıl hareket eder.** Menü çubuğu her değişikliği kendisi canlandırır. Stow, boş öğeleri tam genişlikte ekleyerek gizler; simgeler yerinde soluklaşarak kaybolur. Gösterince soldan kayarak geri gelirler.
 - **macOS 27’ye hazır.** macOS 27 menü çubuğunu tek parça çizer; bu, her simgenin penceresini taşıyan düzenleyicileri bozdu. Ayrıca simgelerin kenarına kendi taşma okunu ekler. Stow o pencerelere hiç dokunmadı; kaldırdığı simgeler o taşma menüsünde de bekler.
 - **Ayrı çubuk yok.** Gizli simgeler için ikinci bir çubuk (Ice’taki gibi) her simgeye tek tek erişmeyi gerektirir; macOS 27 bunu artık sunmuyor. Stow sistemin desteklediği yolda kalır, güncellemelerle bozulmaz.
 - **Sessiz.** Çubuk dururken hiçbir şey çalışmaz. Üzerine gelince gösterme varsayılan olarak kapalıdır, çünkü işaretçiyi izlemesi gereken tek özellik budur.

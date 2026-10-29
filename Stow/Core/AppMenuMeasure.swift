@@ -1,19 +1,63 @@
 import AppKit
 import ApplicationServices
+import HarborKit
 
 /// Where the frontmost app's menus end in the menu bar, read through
-/// Accessibility. Stow asks only for this one thing: with it, the space it
-/// fills when hiding is exactly the room between the menus and its divider,
-/// so icons fade out and back in instead of sliding. Without the permission
-/// Stow still works; it just fills more than it needs.
+/// Accessibility. Stow asks only for this one thing, and only for Always
+/// Hidden on macOS 27: it sizes that section to exactly the room between the
+/// menus and its divider. Everything else works without the permission.
 @MainActor
 enum AppMenuMeasure {
     static var isAllowed: Bool { AXIsProcessTrusted() }
 
-    /// Shows the system prompt that adds Stow to the Accessibility list.
+    /// Called whenever the permission is found to have changed.
+    static var onChange: (() -> Void)?
+    private static var lastKnown: Bool?
+    private static var watchToken: NSObjectProtocol?
+
+    /// Follows the permission while Stow runs. macOS posts a system-wide
+    /// note when the Accessibility list changes; the new state settles a
+    /// moment later, so it's read again after a short wait.
+    static func startWatching() {
+        lastKnown = isAllowed
+        publish()
+        guard watchToken == nil else { return }
+        watchToken = DistributedNotificationCenter.default().addObserver(
+            forName: Notification.Name("com.apple.accessibility.api"), object: nil, queue: .main
+        ) { _ in
+            MainActor.assumeIsolated { checkSoon() }
+        }
+    }
+
+    /// Re-reads the permission now and over the next few seconds.
+    static func checkSoon() {
+        for delay in [0.0, 0.5, 1.5, 3.0] {
+            DispatchQueue.main.asyncAfter(deadline: .now() + delay) { check() }
+        }
+    }
+
+    private static func check() {
+        let now = isAllowed
+        guard now != lastKnown else { return }
+        lastKnown = now
+        log.notice("Accessibility \(now ? "allowed" : "not allowed")")
+        publish()
+        onChange?()
+    }
+
+    /// Tells Harbor, which shows it on Stow's page.
+    private static func publish() {
+        SettingsBridge.publishPermissions(["accessibility": isAllowed])
+    }
+
+    /// Shows the system prompt that adds Stow to the Accessibility list,
+    /// then watches for the switch to be turned on.
     static func requestPermission() {
         let options = [kAXTrustedCheckOptionPrompt.takeUnretainedValue() as String: true] as CFDictionary
         _ = AXIsProcessTrustedWithOptions(options)
+        for delay in stride(from: 1.0, through: 60, by: 1) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + delay) { check() }
+        }
     }
 
     static func openSettings() {

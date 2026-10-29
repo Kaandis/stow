@@ -108,13 +108,16 @@ struct SmoothHidingSection: View {
                     AppMenuMeasure.openSettings()
                 }
             }
-            Text("Stow reads only where the app menus end, so hidden icons fade out and back in instead of sliding. Everything else works without it.")
+            Text("Always Hidden uses it to read where the app menus end and size itself to that room. Stow reads nothing else, and everything else works without it.")
                 .font(.caption)
                 .foregroundStyle(.secondary)
         } header: {
-            Text("Smoother hiding")
+            Text("Always Hidden on macOS 27")
         }
         .onReceive(NotificationCenter.default.publisher(for: NSApplication.didBecomeActiveNotification)) { _ in
+            allowed = AppMenuMeasure.isAllowed
+        }
+        .onReceive(NotificationCenter.default.publisher(for: UserDefaults.didChangeNotification)) { _ in
             allowed = AppMenuMeasure.isAllowed
         }
     }

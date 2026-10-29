@@ -60,7 +60,7 @@ struct GuideView: View {
 
             if ProcessInfo.processInfo.operatingSystemVersion.majorVersion >= 27 {
                 HStack(alignment: .center, spacing: 12) {
-                    Text("Optional: allow Accessibility so Stow can see where app menus end. Hidden icons then fade out and back in instead of sliding. Stow reads nothing else.")
+                    Text("Optional: to use Always Hidden on macOS 27, allow Accessibility so Stow can see where app menus end. Stow reads nothing else.")
                         .font(.system(size: 12))
                         .foregroundStyle(Theme.ink2)
                         .fixedSize(horizontal: false, vertical: true)

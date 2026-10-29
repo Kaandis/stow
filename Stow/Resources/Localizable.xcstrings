@@ -91,6 +91,16 @@
         }
       }
     },
+    "Allow Accessibility for Always Hidden…": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hep Gizli için Erişilebilirliğe İzin Ver…"
+          }
+        }
+      }
+    },
     "Allow Accessibility…": {
       "localizations": {
         "tr": {
@@ -121,12 +131,32 @@
         }
       }
     },
+    "Always Hidden on macOS 27": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "macOS 27’de Hep Gizli"
+          }
+        }
+      }
+    },
     "Always Hidden section": {
       "localizations": {
         "tr": {
           "stringUnit": {
             "state": "translated",
             "value": "Hep Gizli bölümü"
+          }
+        }
+      }
+    },
+    "Always Hidden uses it to read where the app menus end and size itself to that room. Stow reads nothing else, and everything else works without it.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hep Gizli bunu, uygulama menülerinin nerede bittiğini okuyup kendini o boşluğa göre boyutlandırmak için kullanır. Stow başka hiçbir şey okumaz; geri kalan her şey izin olmadan da çalışır."
           }
         }
       }
@@ -311,12 +341,12 @@
         }
       }
     },
-    "Optional: allow Accessibility so Stow can see where app menus end. Hidden icons then fade out and back in instead of sliding. Stow reads nothing else.": {
+    "Optional: to use Always Hidden on macOS 27, allow Accessibility so Stow can see where app menus end. Stow reads nothing else.": {
       "localizations": {
         "tr": {
           "stringUnit": {
             "state": "translated",
-            "value": "İsteğe bağlı: Stow’un uygulama menülerinin nerede bittiğini görebilmesi için Erişilebilirliğe izin ver. Gizli simgeler o zaman kaymak yerine soluklaşarak kaybolur ve geri gelir. Stow başka hiçbir şey okumaz."
+            "value": "İsteğe bağlı: macOS 27’de Hep Gizli’yi kullanmak için Erişilebilirliğe izin ver; Stow uygulama menülerinin nerede bittiğini görebilsin. Stow başka hiçbir şey okumaz."
           }
         }
       }
@@ -431,16 +461,6 @@
         }
       }
     },
-    "Smoother hiding": {
-      "localizations": {
-        "tr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Daha akıcı gizleme"
-          }
-        }
-      }
-    },
     "Stow": {
       "localizations": {
         "tr": {
@@ -477,16 +497,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Stow, nadiren kullandığın simgeleri gözden uzak tutar ve tek tıkla geri getirir."
-          }
-        }
-      }
-    },
-    "Stow reads only where the app menus end, so hidden icons fade out and back in instead of sliding. Everything else works without it.": {
-      "localizations": {
-        "tr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Stow yalnızca uygulama menülerinin nerede bittiğini okur; böylece gizli simgeler kaymak yerine soluklaşarak kaybolur ve geri gelir. Geri kalan her şey izin olmadan da çalışır."
           }
         }
       }

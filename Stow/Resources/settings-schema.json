@@ -7,7 +7,7 @@
     "repository": "https://github.com/Kaandis/stow"
   },
   "defaultsDomain": "app.stow.Stow",
-  "notes": "Every setting is a plain UserDefaults key in defaultsDomain. Stow watches UserDefaults and applies changes live. Launch at login is not listed: it is an SMAppService login item that only Stow itself can register.",
+  "notes": "Every setting is a plain UserDefaults key in defaultsDomain. Stow watches UserDefaults and applies changes live. Launch at login is not listed: it is an SMAppService login item that only Stow itself can register. On macOS 27 Stow optionally uses Accessibility to measure where app menus end; it publishes the state under harbor.permissions.",
   "groups": [
     {
       "id": "showing",
@@ -130,8 +130,8 @@
             "tr": "Hep Gizli bölümü"
           },
           "description": {
-            "en": "A second divider for icons that stay hidden until you ⌥-click Stow’s arrow.",
-            "tr": "Stow’un okuna ⌥ ile tıklayana kadar gizli kalan simgeler için ikinci bir ayraç."
+            "en": "A second divider for icons that stay hidden until you ⌥-click Stow’s arrow. On macOS 27 it needs Accessibility: right-click Stow’s arrow and choose Allow Accessibility.",
+            "tr": "Stow’un okuna ⌥ ile tıklayana kadar gizli kalan simgeler için ikinci bir ayraç. macOS 27’de Erişilebilirlik izni gerekir: Stow’un okuna sağ tıklayıp Erişilebilirliğe İzin Ver’i seç."
           }
         },
         {

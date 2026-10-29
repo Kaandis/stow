@@ -36,6 +36,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             if controller?.state == .hidden { controller?.reveal() }
         }
         applyPrefs()
+        // When Accessibility is turned on or off, refit and re-check the
+        // settings that depend on it.
+        AppMenuMeasure.onChange = { [weak self] in
+            self?.applied = nil
+            self?.applyPrefs()
+            controller.refit()
+        }
+        AppMenuMeasure.startWatching()
+        log.notice("Launched. accessibility=\(AppMenuMeasure.isAllowed)")
 
         // Settings change here or in Harbor; either way, apply them at once.
         defaultsToken = NotificationCenter.default.addObserver(
@@ -47,7 +56,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         activeToken = NotificationCenter.default.addObserver(
             forName: NSApplication.didBecomeActiveNotification, object: nil, queue: .main
         ) { [weak self] _ in
-            MainActor.assumeIsolated { self?.applyPrefs() }
+            MainActor.assumeIsolated {
+                AppMenuMeasure.checkSoon()
+                self?.applyPrefs()
+            }
         }
 
         if !Prefs.bool(Prefs.hasCompletedOnboarding) { Guide.show() }
@@ -87,7 +99,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             }
         }
         #endif
-        log.notice("Launched")
     }
 
     func applicationWillTerminate(_ notification: Notification) {
