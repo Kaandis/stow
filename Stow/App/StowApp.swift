@@ -75,14 +75,23 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     private var applied: (shortcut: String, hover: Bool, always: Bool, dividers: Bool)?
+    private var isApplying = false
 
+    /// Applies what changed. Rearranging the bar writes item positions into
+    /// UserDefaults, which posts another change notification; the record is
+    /// updated first and re-entry is ignored, so that can't loop.
     private func applyPrefs() {
+        guard !isApplying else { return }
+        isApplying = true
+        defer { isApplying = false }
+        controller?.followDraggedDividers()
         let now = (Prefs.string(Prefs.toggleShortcut), Prefs.bool(Prefs.revealOnHover),
                    Prefs.bool(Prefs.alwaysHiddenEnabled), Prefs.bool(Prefs.showDividers))
-        if applied?.shortcut != now.0 { shortcut.apply(now.0) }
-        if applied?.hover != now.1 { hover.setEnabled(now.1) }
-        if applied == nil || applied?.always != now.2 || applied?.dividers != now.3 { controller?.applySettings() }
+        let previous = applied
         applied = now
+        if previous?.shortcut != now.0 { shortcut.apply(now.0) }
+        if previous?.hover != now.1 { hover.setEnabled(now.1) }
+        if previous == nil || previous?.always != now.2 || previous?.dividers != now.3 { controller?.applySettings() }
     }
 
     /// With Harbor installed, settings live there; otherwise in Stow's own window.

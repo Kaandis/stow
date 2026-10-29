@@ -29,6 +29,8 @@ final class StatusController {
     /// Bumped on every change, so a delayed grow never lands after the
     /// icons were asked to show again.
     private var fillGeneration = 0
+    /// The divider position each set of spacers was seated beside.
+    private var spacerBases: [String: Double] = [:]
 
     /// Before macOS 27: wider than any display, so everything to the left
     /// is pushed off.
@@ -44,6 +46,11 @@ final class StatusController {
         // its divider just left of it. Larger positions sit
         // further left, and 0 means "unset". After that, macOS keeps wherever
         // you ⌘-drag them.
+        // Spacers left behind by a crash would come back as blank gaps.
+        for key in UserDefaults.standard.dictionaryRepresentation().keys
+        where key.hasPrefix(Self.positionKey("Stow.")) && key.contains(".Spacer") {
+            UserDefaults.standard.removeObject(forKey: key)
+        }
         let start = Self.systemItemsEdge + 1
         Self.seedPosition("Stow.Arrow", start)
         Self.seedPosition("Stow.Divider", start + 1)
@@ -129,7 +136,9 @@ final class StatusController {
         if closed && Self.isHosted {
             fill(beside: item)
         } else {
-            removeSpacers(beside: item)
+            // Spacers stay in place at no length, so the next hide only grows
+            // them and nothing shifts first.
+            if let name = item.autosaveName { spacers[name]?.forEach { $0.length = 0 } }
             item.length = closed ? Self.closedLength : (visible ? Self.dividerLength : 0)
         }
         guard let button = item.button else { return }
@@ -144,50 +153,100 @@ final class StatusController {
     /// widest display. macOS then overflows everything left of them; the
     /// divider and spacers go too, so no gap is left behind.
     ///
-    /// New spacers start at no length and everything grows together a beat
-    /// later, once they're in place. Grown one by one, the divider would
-    /// first shove the icons left and only then would they fade into the
-    /// overflow; together they always simply fade.
+    /// Spacers are made once and kept at no length while icons show. Added
+    /// at hide time, each new one would nudge the icons left before they
+    /// fade; kept, hiding is only growing, and the icons simply fade.
     private func fill(beside divider: NSStatusItem) {
-        let widths = NSScreen.screens.map(\.frame.width)
-        let cap = ((widths.min() ?? 1000) / 2).rounded(.down) - Self.hostedPadding
-        let slot = cap + Self.hostedPadding
-        let count = min(max(Int(((widths.max() ?? 1000) / slot).rounded(.up)), 1), 8)
+        let (cap, count) = Self.fillMetrics
+        let created = seatSpacers(beside: divider, count: count - 1)
         guard let name = divider.autosaveName else { divider.length = cap; return }
-
-        var placed = false
-        if (spacers[name]?.count ?? 0) != count - 1 {
-            removeSpacers(beside: divider)
-            // Seated just left of wherever the divider is now, so they move
-            // with it when you ⌘-drag the divider elsewhere.
-            let base = UserDefaults.standard.double(forKey: Self.positionKey(name))
-            spacers[name] = (1..<max(count, 1)).map { index in
-                let spacerName = "\(name).Spacer\(index)"
-                UserDefaults.standard.set(base + Double(index) * 0.1, forKey: Self.positionKey(spacerName))
-                let item = NSStatusBar.system.statusItem(withLength: 0)
-                item.autosaveName = spacerName
-                item.button?.title = ""
-                item.button?.isEnabled = false
-                item.button?.setAccessibilityElement(false)
-                return item
-            }
-            placed = !(spacers[name]?.isEmpty ?? true)
-        }
         let generation = fillGeneration
         let grow = { [weak self] in
             guard let self, generation == self.fillGeneration else { return }
-            divider.length = cap
             self.spacers[name]?.forEach { $0.length = cap }
+            divider.length = cap
         }
-        if placed {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.15, execute: grow)
+        if created {
+            whenSeated(spacers[name] ?? [], beside: divider, generation: generation, then: grow)
         } else {
             grow()
         }
     }
 
+    /// The largest length every display accepts, and how many items it
+    /// takes at that length to span the widest display.
+    private static var fillMetrics: (cap: CGFloat, count: Int) {
+        let widths = NSScreen.screens.map(\.frame.width)
+        let cap = ((widths.min() ?? 1000) / 2).rounded(.down) - hostedPadding
+        let slot = cap + hostedPadding
+        return (cap, min(max(Int(((widths.max() ?? 1000) / slot).rounded(.up)), 1), 8))
+    }
+
+    /// Makes sure `count` spacers sit just left of the divider, recreating
+    /// them only when the count changed or the divider was dragged elsewhere.
+    /// Returns whether new ones were made.
+    @discardableResult
+    private func seatSpacers(beside divider: NSStatusItem, count: Int) -> Bool {
+        guard let name = divider.autosaveName else { return false }
+        let base = UserDefaults.standard.double(forKey: Self.positionKey(name))
+        if spacers[name]?.count == count && spacerBases[name] == base { return false }
+        removeSpacers(beside: divider)
+        spacerBases[name] = base
+        guard count > 0 else { return false }
+        spacers[name] = (1...count).map { index in
+            let spacerName = "\(name).Spacer\(index)"
+            UserDefaults.standard.set(base + Double(index) * 0.1, forKey: Self.positionKey(spacerName))
+            let item = NSStatusBar.system.statusItem(withLength: 0)
+            item.autosaveName = spacerName
+            item.button?.title = ""
+            item.button?.isEnabled = false
+            item.button?.setAccessibilityElement(false)
+            return item
+        }
+        return true
+    }
+
+    /// Called when preferences change: if you ⌘-dragged a divider, its
+    /// spacers follow it to the new place.
+    func followDraggedDividers() {
+        guard Self.isHosted else { return }
+        for item in [divider] + (alwaysDivider.map { [$0] } ?? []) {
+            guard let name = item.autosaveName, let current = spacers[name] else { continue }
+            let base = UserDefaults.standard.double(forKey: Self.positionKey(name))
+            guard spacerBases[name] != base else { continue }
+            let length = current.first?.length ?? 0
+            seatSpacers(beside: item, count: current.count)
+            spacers[name]?.forEach { $0.length = length }
+        }
+    }
+
+    /// Waits until new spacers sit right beside the divider in the bar, as
+    /// their frames report, then calls `then`. Gives up waiting after about
+    /// half a second and grows anyway.
+    private func whenSeated(_ items: [NSStatusItem], beside divider: NSStatusItem, generation: Int,
+                            attempt: Int = 0, then: @escaping () -> Void) {
+        guard generation == fillGeneration else { return }
+        let seated: Bool = {
+            guard let dividerFrame = divider.button?.window?.frame, dividerFrame.width > 0 else { return false }
+            return items.allSatisfy { item in
+                guard let frame = item.button?.window?.frame, frame.width > 0 else { return false }
+                return frame.maxX <= dividerFrame.minX + 1 && frame.maxX >= dividerFrame.minX - 40
+            }
+        }()
+        if seated || attempt >= 20 {
+            // One more beat so the bar has drawn them before everything grows.
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.05, execute: then)
+        } else {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.03) { [weak self] in
+                self?.whenSeated(items, beside: divider, generation: generation, attempt: attempt + 1, then: then)
+            }
+        }
+    }
+
     private func removeSpacers(beside divider: NSStatusItem) {
-        guard let name = divider.autosaveName, let items = spacers.removeValue(forKey: name) else { return }
+        guard let name = divider.autosaveName else { return }
+        spacerBases[name] = nil
+        guard let items = spacers.removeValue(forKey: name) else { return }
         for item in items {
             let key = item.autosaveName.map(Self.positionKey)
             NSStatusBar.system.removeStatusItem(item)
