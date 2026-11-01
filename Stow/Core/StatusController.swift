@@ -33,6 +33,10 @@ final class StatusController {
     private static let settleTime: TimeInterval = 0.45
     /// The divider position each set of spacers was seated beside.
     private var spacerBases: [String: Double] = [:]
+    /// The position spacers are seated at beside each divider, once found by
+    /// trying (see `checkSeating`), and the search for it while it's on.
+    private var seats: [String: Double] = [:]
+    private var seatSearch: [String: (low: Double?, high: Double?, tries: Int)] = [:]
     /// Where each divider's group started the last time it was open.
     private var openLeftEdges: [String: CGFloat] = [:]
     private var activationToken: NSObjectProtocol?
@@ -208,9 +212,11 @@ final class StatusController {
         spacerBases[name] = base
         // Seated just left of wherever the divider is now, so they move with
         // it when you ⌘-drag the divider elsewhere.
+        let seat = seats[name] ?? (UserDefaults.standard.object(forKey: Self.seatKey(name)) as? Double) ?? base + 0.1
+        seats[name] = seat
         spacers[name] = lengths.enumerated().map { index, length in
             let spacerName = "\(name).Spacer\(index + 1)"
-            UserDefaults.standard.set(base + Double(index + 1) * 0.1, forKey: Self.positionKey(spacerName))
+            UserDefaults.standard.set(seat + Double(index) * 0.01, forKey: Self.positionKey(spacerName))
             let item = NSStatusBar.system.statusItem(withLength: length)
             item.autosaveName = spacerName
             item.button?.title = ""
@@ -218,7 +224,59 @@ final class StatusController {
             item.button?.setAccessibilityElement(false)
             return item
         }
+        checkSeating(of: divider)
     }
+
+    /// Once ⌘-dragged, macOS 27 keeps its own record of where Stow's items
+    /// sit and never writes it back, so the divider's position in Stow's
+    /// preferences can be stale. Spacers seated by it can land anywhere,
+    /// even right of the arrow, pushing Stow's own items off with the rest.
+    /// So after the bar lays them out, Stow checks the first spacer sits
+    /// right against the divider; if not, it narrows down the position that
+    /// does, a step per layout, and remembers it.
+    private func checkSeating(of divider: NSStatusItem) {
+        guard let name = divider.autosaveName else { return }
+        DispatchQueue.main.asyncAfter(deadline: .now() + Self.settleTime) { [weak self] in
+            guard let self, let first = self.spacers[name]?.first, let seat = self.seats[name],
+                  let spacer = first.button?.window?.frame, let edge = divider.button?.window?.frame else { return }
+            var search = self.seatSearch[name] ?? (nil, nil, 0)
+            if edge.minY >= 0, spacer.minY >= 0, spacer.maxX > edge.minX + 2 {
+                search.low = seat        // right of the divider: seat further left
+            } else if edge.minY >= 0, spacer.minY >= 0, spacer.maxX < edge.minX - 2 {
+                search.high = seat       // icons left between them: seat closer
+            } else if edge.minY < 0, spacer.minY >= 0 {
+                search.low = seat        // the divider itself was pushed off
+            } else {
+                // Right against it, or too wide to fit at all (a narrow
+                // display), which hides everything left of it just the same.
+                if search.tries > 0 {
+                    UserDefaults.standard.set(seat, forKey: Self.seatKey(name))
+                    log.notice("Spacers seated at \(seat)")
+                }
+                self.seatSearch[name] = nil
+                return
+            }
+            search.tries += 1
+            guard search.tries <= 12 else {
+                log.error("Couldn't seat the spacers beside \(name); showing instead")
+                self.seatSearch[name] = nil
+                self.apply(.shown, animated: false)
+                return
+            }
+            let step = 16 * pow(2, Double(search.tries - 1))
+            switch (search.low, search.high) {
+            case let (low?, high?): self.seats[name] = (low + high) / 2
+            case let (low?, nil): self.seats[name] = low + step
+            case let (nil, high?): self.seats[name] = max(high - step, 0)
+            default: return
+            }
+            self.seatSearch[name] = search
+            self.removeSpacers(beside: divider)
+            self.close(divider)
+        }
+    }
+
+    private static func seatKey(_ autosaveName: String) -> String { "seat \(autosaveName)" }
 
     /// Where the divider's group starts while it's open. Nil if the bar
     /// hasn't laid it out (on another Space, say).

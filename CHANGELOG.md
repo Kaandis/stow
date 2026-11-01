@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.4 — 2026-11-01
+
+- On macOS 27, hiding no longer sweeps Stow’s own arrow away with the other icons. Once Stow’s items have been ⌘-dragged, macOS keeps their real position to itself, so the spacers could land right of the arrow and push it off the bar. Stow now checks where the spacers landed, finds the spot right against the divider in a few quick tries and remembers it.
+
 ## 1.0.3 — 2026-10-29
 
 - On macOS 27, hiding no longer grows Stow’s divider, which the menu bar animated, sometimes shoving icons left before they faded. Blank spacers are added beside it already at full width, so icons fade out where they are; showing takes them away and the icons slide back in from the left, the same way every time.
