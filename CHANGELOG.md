@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.0.5 — 2026-11-18
+
+- On macOS 27, Stow no longer seats blank spacers by guessing positions. macOS keeps where items sit to itself, so the spacers could land in the wrong place and the bar kept rearranging itself. While hidden, Stow’s divider and arrow now each take half the display instead, and macOS always seats them where you put them. Icons fade out in place, and Stow’s arrow stays where it is.
+- Stow asks for no permissions. Always Hidden no longer needs Accessibility on macOS 27.
+
 ## 1.0.4 — 2026-11-01
 
 - On macOS 27, hiding no longer sweeps Stow’s own arrow away with the other icons. Once Stow’s items have been ⌘-dragged, macOS keeps their real position to itself, so the spacers could land right of the arrow and push it off the bar. Stow now checks where the spacers landed, finds the spot right against the divider in a few quick tries and remembers it.

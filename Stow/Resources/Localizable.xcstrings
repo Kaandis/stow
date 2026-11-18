@@ -81,82 +81,12 @@
         }
       }
     },
-    "Accessibility": {
-      "localizations": {
-        "tr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Erişilebilirlik"
-          }
-        }
-      }
-    },
-    "Allow Accessibility for Always Hidden…": {
-      "localizations": {
-        "tr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Hep Gizli için Erişilebilirliğe İzin Ver…"
-          }
-        }
-      }
-    },
-    "Allow Accessibility…": {
-      "localizations": {
-        "tr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Erişilebilirliğe İzin Ver…"
-          }
-        }
-      }
-    },
-    "Allowed": {
-      "localizations": {
-        "tr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "İzin verildi"
-          }
-        }
-      }
-    },
-    "Allow…": {
-      "localizations": {
-        "tr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "İzin Ver…"
-          }
-        }
-      }
-    },
-    "Always Hidden on macOS 27": {
-      "localizations": {
-        "tr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "macOS 27’de Hep Gizli"
-          }
-        }
-      }
-    },
     "Always Hidden section": {
       "localizations": {
         "tr": {
           "stringUnit": {
             "state": "translated",
             "value": "Hep Gizli bölümü"
-          }
-        }
-      }
-    },
-    "Always Hidden uses it to read where the app menus end and size itself to that room. Stow reads nothing else, and everything else works without it.": {
-      "localizations": {
-        "tr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Hep Gizli bunu, uygulama menülerinin nerede bittiğini okuyup kendini o boşluğa göre boyutlandırmak için kullanır. Stow başka hiçbir şey okumaz; geri kalan her şey izin olmadan da çalışır."
           }
         }
       }
@@ -311,42 +241,12 @@
         }
       }
     },
-    "Not allowed": {
-      "localizations": {
-        "tr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "İzin verilmedi"
-          }
-        }
-      }
-    },
     "OK": {
       "localizations": {
         "tr": {
           "stringUnit": {
             "state": "translated",
             "value": "Tamam"
-          }
-        }
-      }
-    },
-    "On macOS 27, Always Hidden needs Accessibility, below, to size itself to the app menus.": {
-      "localizations": {
-        "tr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "macOS 27’de Hep Gizli, kendini uygulama menülerine göre boyutlandırmak için aşağıdaki Erişilebilirlik iznine ihtiyaç duyar."
-          }
-        }
-      }
-    },
-    "Optional: to use Always Hidden on macOS 27, allow Accessibility so Stow can see where app menus end. Stow reads nothing else.": {
-      "localizations": {
-        "tr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "İsteğe bağlı: macOS 27’de Hep Gizli’yi kullanmak için Erişilebilirliğe izin ver; Stow uygulama menülerinin nerede bittiğini görebilsin. Stow başka hiçbir şey okumaz."
           }
         }
       }

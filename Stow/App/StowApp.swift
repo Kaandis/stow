@@ -26,6 +26,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationDidFinishLaunching(_ notification: Notification) {
         Prefs.registerDefaults()
         SettingsBridge.listen()
+        // Stow asks for no permissions any more; clear what 1.0.4 told Harbor.
+        SettingsBridge.publishPermissions([:])
 
         let controller = StatusController()
         controller.onShowSettings = { [weak self] in self?.showSettings() }
@@ -36,15 +38,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             if controller?.state == .hidden { controller?.reveal() }
         }
         applyPrefs()
-        // When Accessibility is turned on or off, refit and re-check the
-        // settings that depend on it.
-        AppMenuMeasure.onChange = { [weak self] in
-            self?.applied = nil
-            self?.applyPrefs()
-            controller.refit()
-        }
-        AppMenuMeasure.startWatching()
-        log.notice("Launched. accessibility=\(AppMenuMeasure.isAllowed)")
+        log.notice("Launched")
 
         // Settings change here or in Harbor; either way, apply them at once.
         defaultsToken = NotificationCenter.default.addObserver(
@@ -56,10 +50,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         activeToken = NotificationCenter.default.addObserver(
             forName: NSApplication.didBecomeActiveNotification, object: nil, queue: .main
         ) { [weak self] _ in
-            MainActor.assumeIsolated {
-                AppMenuMeasure.checkSoon()
-                self?.applyPrefs()
-            }
+            MainActor.assumeIsolated { self?.applyPrefs() }
         }
 
         if !Prefs.bool(Prefs.hasCompletedOnboarding) { Guide.show() }
@@ -90,6 +81,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 MainActor.assumeIsolated {
                     switch command {
                     case "toggle": controller.toggleHidden()
+                    case let c? where c.hasPrefix("burst"):
+                        // Quick clicks, as fast as a person makes them.
+                        for i in 0..<(Int(c.dropFirst(5)) ?? 5) {
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.12 * Double(i)) { controller.toggleHidden() }
+                        }
                     case "hidden": controller.set(.hidden)
                     case "shown": controller.set(.shown)
                     case "all": controller.set(.all)
@@ -121,9 +117,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         guard !isApplying else { return }
         isApplying = true
         defer { isApplying = false }
-        controller?.followDraggedDividers()
         let now = (Prefs.string(Prefs.toggleShortcut), Prefs.bool(Prefs.revealOnHover),
-                   Prefs.bool(Prefs.alwaysHiddenEnabled) && StatusController.canUseAlwaysHidden,
+                   Prefs.bool(Prefs.alwaysHiddenEnabled),
                    Prefs.bool(Prefs.showDividers))
         let previous = applied
         applied = now

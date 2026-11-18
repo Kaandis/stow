@@ -58,24 +58,6 @@ struct GuideView: View {
             }
             .padding(.top, 24)
 
-            if ProcessInfo.processInfo.operatingSystemVersion.majorVersion >= 27 {
-                HStack(alignment: .center, spacing: 12) {
-                    Text("Optional: to use Always Hidden on macOS 27, allow Accessibility so Stow can see where app menus end. Stow reads nothing else.")
-                        .font(.system(size: 12))
-                        .foregroundStyle(Theme.ink2)
-                        .fixedSize(horizontal: false, vertical: true)
-                    Spacer(minLength: 8)
-                    if !AppMenuMeasure.isAllowed {
-                        Button("Allow…") {
-                            AppMenuMeasure.requestPermission()
-                            AppMenuMeasure.openSettings()
-                        }
-                        .buttonStyle(HarborButtonStyle(prominent: false))
-                    }
-                }
-                .padding(.top, 18)
-            }
-
             Spacer(minLength: 20)
             HStack {
                 Spacer()

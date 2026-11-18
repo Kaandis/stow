@@ -56,19 +56,12 @@ private struct GeneralSettings: View {
             Section {
                 Toggle("Show dividers while icons are showing", isOn: $showDividers)
                 Toggle("Always Hidden section", isOn: $alwaysHidden)
-                    .disabled(!StatusController.canUseAlwaysHidden)
-                Text(StatusController.canUseAlwaysHidden
-                     ? LocalizedStringKey("A second divider for icons that stay hidden until you ⌥-click Stow’s arrow.")
-                     : LocalizedStringKey("On macOS 27, Always Hidden needs Accessibility, below, to size itself to the app menus."))
+                Text("A second divider for icons that stay hidden until you ⌥-click Stow’s arrow.")
                     .font(.caption)
                     .foregroundStyle(.secondary)
                 Button("How to Use Stow…") { Guide.show() }
             } header: {
                 Text("Sections")
-            }
-
-            if ProcessInfo.processInfo.operatingSystemVersion.majorVersion >= 27 {
-                SmoothHidingSection()
             }
 
             Section {
@@ -87,39 +80,6 @@ private struct GeneralSettings: View {
             }
         }
         .formStyle(.grouped)
-    }
-}
-
-/// The one optional permission: Accessibility, to measure where app menus
-/// end so hidden icons fade instead of sliding on macOS 27.
-struct SmoothHidingSection: View {
-    @State private var allowed = AppMenuMeasure.isAllowed
-
-    var body: some View {
-        Section {
-            LabeledContent("Accessibility") {
-                Label(allowed ? "Allowed" : "Not allowed",
-                      systemImage: allowed ? "checkmark.circle.fill" : "circle.dashed")
-                    .foregroundStyle(allowed ? Color.primary : .secondary)
-            }
-            if !allowed {
-                Button("Allow Accessibility…") {
-                    AppMenuMeasure.requestPermission()
-                    AppMenuMeasure.openSettings()
-                }
-            }
-            Text("Always Hidden uses it to read where the app menus end and size itself to that room. Stow reads nothing else, and everything else works without it.")
-                .font(.caption)
-                .foregroundStyle(.secondary)
-        } header: {
-            Text("Always Hidden on macOS 27")
-        }
-        .onReceive(NotificationCenter.default.publisher(for: NSApplication.didBecomeActiveNotification)) { _ in
-            allowed = AppMenuMeasure.isAllowed
-        }
-        .onReceive(NotificationCenter.default.publisher(for: UserDefaults.didChangeNotification)) { _ in
-            allowed = AppMenuMeasure.isAllowed
-        }
     }
 }
 
