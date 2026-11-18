@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.6 — 2026-11-18
+
+- Stow no longer disappears on its own: macOS 27 sometimes quit it as an idle background app; Stow now turns that quit down.
+
 ## 1.0.5 — 2026-11-18
 
 - On macOS 27, Stow no longer seats blank spacers by guessing positions. macOS keeps where items sit to itself, so the spacers could land in the wrong place and the bar kept rearranging itself. While hidden, Stow’s divider and arrow now each take half the display instead, and macOS always seats them where you put them. Icons fade out in place, and Stow’s arrow stays where it is.
